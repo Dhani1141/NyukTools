@@ -1730,6 +1730,22 @@ select.form-control option {
 
 /* ==================== RESPONSIVE — NEW SECTIONS ==================== */
 @media (max-width: 768px) {
+  /* Performance optimizations for mobile */
+  .tool-card, .profile-card {
+    backdrop-filter: none !important;
+    background: var(--bg-secondary) !important;
+    transform-style: flat !important;
+    will-change: auto !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  .tool-card::before, .tool-card::after {
+    display: none !important;
+  }
+  .tool-card * {
+    transform: none !important;
+  }
+  
   .section-title { font-size: 1.5rem; }
   .service-grid { grid-template-columns: 1fr; }
   .order-grid { grid-template-columns: 1fr; }
