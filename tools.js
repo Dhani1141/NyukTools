@@ -118,57 +118,101 @@ TOOLS['slug-generator'] = {
 
 TOOLS['ai-nickname-generator'] = {
   render: function() {
-    return '<div class="tool-section"><label class="tool-label">Nama Panggilan (Maks 1-2 kata)</label><input type="text" class="tool-input" id="nickName" placeholder="Contoh: Kunyuk"></div><div class="tool-section" style="margin-top:1rem;"><label class="tool-label">Tema Kesukaan</label><select class="tool-input" id="nickTheme"><option value="anime">Anime / Wibu</option><option value="dark">Dark / Edgy</option><option value="gaming">Gaming / E-Sports</option><option value="animal">Hewan / Nature</option><option value="hacker">Hacker / Cyber</option></select></div><div class="tool-btn-row"><button class="tool-btn primary" id="generateNickBtn"><i class="fas fa-magic"></i> Generate AI Nickname</button></div><div class="tool-section" style="margin-top:1rem;"><div id="nickOutput" style="display:flex; flex-direction:column; gap:0.5rem;"></div></div>';
+    return `
+      <div class="tool-section">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); padding: 1rem; border-radius: var(--border-radius-sm); margin-bottom: 1.5rem;">
+          <h4 style="color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;"><i class="fas fa-microchip"></i> Powered by Gemini AI</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.5;">Untuk menggunakan Real AI secara gratis di web tanpa backend, diperlukan API Key dari Google Gemini. Key akan disimpan aman di browsermu.</p>
+          <input type="password" class="tool-input" id="geminiApiKey" placeholder="Paste Gemini API Key kamu di sini..." style="margin-bottom: 0.75rem;">
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size: 0.85rem; color: var(--accent); text-decoration: none;"><i class="fas fa-external-link-alt" style="margin-right: 4px;"></i> Dapatkan API Key Gratis di sini</a>
+        </div>
+        <label class="tool-label">Nama Panggilan (Maks 1-2 kata)</label>
+        <input type="text" class="tool-input" id="nickName" placeholder="Contoh: Kunyuk">
+      </div>
+      <div class="tool-section" style="margin-top:1rem;">
+        <label class="tool-label">Tema / Gaya Kesukaan (Ketik bebas)</label>
+        <input type="text" class="tool-input" id="nickTheme" placeholder="Contoh: Dark Hacker, Wibu Keren, Kopi, Mitologi Yunani...">
+      </div>
+      <div class="tool-btn-row">
+        <button class="tool-btn primary" id="generateNickBtn"><i class="fas fa-magic"></i> Generate dengan Real AI</button>
+      </div>
+      <div class="tool-section" style="margin-top:1rem;">
+        <div id="nickOutput" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+      </div>
+    `;
   },
   init: function() {
-    $('generateNickBtn').onclick = function() {
+    // Load saved API Key
+    var savedKey = localStorage.getItem('nyuk_gemini_key');
+    if (savedKey) {
+      $('geminiApiKey').value = savedKey;
+    }
+
+    $('generateNickBtn').onclick = async function() {
+      var apiKey = $('geminiApiKey').value.trim();
       var name = $('nickName').value.trim();
-      var theme = $('nickTheme').value;
+      var theme = $('nickTheme').value.trim();
       
-      if (!name) {
-        showToast('Masukkan nama panggilan dulu!');
+      if (!apiKey) {
+        showToast('API Key Gemini tidak boleh kosong!');
+        return;
+      }
+      if (!name || !theme) {
+        showToast('Masukkan nama panggilan dan tema kesukaan!');
         return;
       }
       
-      var out = $('nickOutput');
-      out.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> AI sedang meracik...</div>';
+      // Save API key
+      localStorage.setItem('nyuk_gemini_key', apiKey);
       
-      // Artificial delay for "AI" generation feel
-      setTimeout(function() {
-        var results = [];
-        var dict = {
-          anime: { pre: ["Kyu", "Shi", "Ren", "Zen", "Ken"], post: ["Kun", "Chan", "San", "Sama", "Sen"] },
-          dark: { pre: ["El", "Zyn", "Grim", "Noct", "Vex"], post: ["Zol", "X", "Void", "Soul", "Hex"] },
-          gaming: { pre: ["Pro", "God", "Rex", "Faze", "Zen"], post: ["Z", "Bot", "X", "Win", "Opie"] },
-          animal: { pre: ["Red", "Mad", "Lil", "Big", "Sly"], post: ["Fox", "Wolf", "Yuk", "Bear", "Cat"] },
-          hacker: { pre: ["0x", "Sys", "Net", "Neo", "Root"], post: ["Sec", "X", "Exe", "Bin", "Dot"] }
-        };
+      var out = $('nickOutput');
+      out.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem;"><i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--accent); margin-bottom: 0.5rem; display: block;"></i> AI sedang memikirkan nickname terkeren...</div>';
+      
+      var prompt = "Buatkan 5 rekomendasi nickname kreatif untuk orang bernama '" + name + "' dengan tema kesukaan '" + theme + "'. Syarat mutlak: maksimal 3 kata/suku kata penyebutan (contoh format: El Kun Yuk, atau Dark Tung, atau Cypher Kunyuk). Nickname harus aesthetic dan nyambung dengan tema. Jangan berikan teks pembuka atau penutup. Berikan output HANYA berupa JSON array yang berisi 5 string nickname tersebut, contoh format: [\"Nick1\", \"Nick2\", \"Nick3\", \"Nick4\", \"Nick5\"].";
+
+      try {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        const data = await response.json();
         
-        var selected = dict[theme] || dict['gaming'];
-        var baseName = name.split(" ")[0]; // Take first word to keep it short
-        baseName = baseName.charAt(0).toUpperCase() + baseName.slice(1).toLowerCase();
+        if (data.error) {
+          out.innerHTML = '<div style="color:#ef4444; background: rgba(239, 68, 68, 0.1); padding:1rem; border:1px solid #ef4444; border-radius:8px;"><i class="fas fa-circle-exclamation"></i> Error: ' + data.error.message + '</div>';
+          return;
+        }
+
+        let aiText = data.candidates[0].content.parts[0].text;
         
-        var shuffle = function(arr) { return arr.slice().sort(function(){return 0.5 - Math.random()}); };
-        var pres = shuffle(selected.pre);
-        var posts = shuffle(selected.post);
+        // Clean JSON formatting if AI wrapped it in markdown
+        aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
         
-        // Target: 3 "penyebutan" (syllables/words). Format combinations:
-        results.push(pres[0] + " " + baseName + " " + posts[0]); // Prefix + Base + Suffix
-        results.push(pres[1] + " " + baseName + " " + posts[1]); // Prefix + Base + Suffix
-        results.push(pres[2] + baseName + " " + posts[2]);       // PreBase + Suffix
-        results.push(pres[3] + " " + baseName + posts[3]);       // Prefix + BasePost
-        results.push(pres[4] + " " + baseName + " " + posts[4]); // Prefix + Base + Suffix
-        
+        let nicknames = [];
+        try {
+          nicknames = JSON.parse(aiText);
+        } catch(e) {
+          // Fallback parsing if AI output isn't pure JSON
+          nicknames = aiText.split('\\n').map(n => n.replace(/^[-\\d. "*]+/, '').replace(/["']/g, '').trim()).filter(n => n.length > 0).slice(0, 5);
+        }
+
         var html = '';
-        results.forEach(function(r) {
-          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">' +
-                  '<span style="font-weight:600; font-size:1.1rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
-                  '<button class="tool-btn sm" onclick="copyText(\'' + r + '\')"><i class="fas fa-copy"></i> Salin</button>' +
+        nicknames.forEach(function(r) {
+          if(!r) return;
+          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem 1.25rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; transition: all 0.3s ease;" onmouseover="this.style.background=\\'rgba(255,255,255,0.1)\\'" onmouseout="this.style.background=\\'rgba(255,255,255,0.05)\\'">' +
+                  '<span style="font-weight:600; font-size:1.15rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
+                  '<button class="tool-btn sm" onclick="copyText(\\'' + r + '\\')"><i class="fas fa-copy"></i> Salin</button>' +
                   '</div>';
         });
         out.innerHTML = html;
-        showToast('Nickname berhasil digenerate! 🎉');
-      }, 700);
+        showToast('Berhasil digenerate oleh AI! 🧠');
+        
+      } catch (err) {
+        out.innerHTML = '<div style="color:#ef4444; background: rgba(239, 68, 68, 0.1); padding:1rem; border:1px solid #ef4444; border-radius:8px;"><i class="fas fa-wifi"></i> Gagal menghubungi API AI. Pastikan internet lancar atau API Key valid.</div>';
+      }
     };
   }
 };
