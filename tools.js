@@ -122,9 +122,7 @@ TOOLS['ai-nickname-generator'] = {
       <div class="tool-section">
         <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent); padding: 1rem; border-radius: var(--border-radius-sm); margin-bottom: 1.5rem;">
           <h4 style="color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;"><i class="fas fa-microchip"></i> Powered by Gemini AI</h4>
-          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.5;">Untuk menggunakan Real AI secara gratis di web tanpa backend, diperlukan API Key dari Google Gemini. Key akan disimpan aman di browsermu.</p>
-          <input type="password" class="tool-input" id="geminiApiKey" placeholder="Paste Gemini API Key kamu di sini..." style="margin-bottom: 0.75rem;">
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size: 0.85rem; color: var(--accent); text-decoration: none;"><i class="fas fa-external-link-alt" style="margin-right: 4px;"></i> Dapatkan API Key Gratis di sini</a>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5;">Tool ini ditenagai oleh kecerdasan buatan dari Google Gemini untuk meracik nickname paling keren.</p>
         </div>
         <label class="tool-label">Nama Panggilan (Maks 1-2 kata)</label>
         <input type="text" class="tool-input" id="nickName" placeholder="Contoh: Kunyuk">
@@ -142,28 +140,15 @@ TOOLS['ai-nickname-generator'] = {
     `;
   },
   init: function() {
-    // Load saved API Key
-    var savedKey = localStorage.getItem('nyuk_gemini_key');
-    if (savedKey) {
-      $('geminiApiKey').value = savedKey;
-    }
-
     $('generateNickBtn').onclick = async function() {
-      var apiKey = $('geminiApiKey').value.trim();
+      var apiKey = 'AQ.Ab8RN6JzcjXL4BYTynJt01DCoXAm6_EWnYplfYWa6kVe6ZeW9A';
       var name = $('nickName').value.trim();
       var theme = $('nickTheme').value.trim();
       
-      if (!apiKey) {
-        showToast('API Key Gemini tidak boleh kosong!');
-        return;
-      }
       if (!name || !theme) {
         showToast('Masukkan nama panggilan dan tema kesukaan!');
         return;
       }
-      
-      // Save API key
-      localStorage.setItem('nyuk_gemini_key', apiKey);
       
       var out = $('nickOutput');
       out.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem;"><i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--accent); margin-bottom: 0.5rem; display: block;"></i> AI sedang memikirkan nickname terkeren...</div>';
