@@ -816,7 +816,7 @@ section.stats {
   margin-bottom: 1rem;
   display: block;
   transition: transform 0.3s ease, filter 0.3s ease;
-  transform: translateZ(40px);
+  transform: translateZ(15px);
 }
 
 .tool-card:hover .tool-card-icon {
@@ -828,7 +828,7 @@ section.stats {
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
-  transform: translateZ(25px);
+  transform: translateZ(10px);
   position: relative;
   z-index: 2;
 }
@@ -838,7 +838,7 @@ section.stats {
   margin-bottom: 1.25rem;
   font-size: 0.9rem;
   line-height: 1.6;
-  transform: translateZ(15px);
+  transform: translateZ(5px);
   position: relative;
   z-index: 2;
 }
@@ -854,7 +854,7 @@ section.stats {
   margin-bottom: 1.25rem;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  transform: translateZ(20px);
+  transform: translateZ(8px);
   position: relative;
   z-index: 2;
 }
@@ -871,7 +871,7 @@ section.stats {
   width: 100%;
   font-family: inherit;
   font-size: 0.92rem;
-  transform: translateZ(30px);
+  transform: translateZ(12px);
   position: relative;
   z-index: 2;
 }
