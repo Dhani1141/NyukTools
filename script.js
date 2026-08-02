@@ -106,6 +106,13 @@ function initLoader() {
 // ==================== PARTICLES ====================
 function initParticles() {
   if (typeof particlesJS === "undefined") return;
+  
+  // Disable particles on mobile to improve performance
+  if (window.innerWidth <= 768) {
+    var pjs = document.getElementById('particles-js');
+    if(pjs) pjs.style.display = 'none';
+    return;
+  }
 
   // Get current accent color
   const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#10b981";
