@@ -50,6 +50,7 @@ const toolsData = [
   { id: 32, name: "Hash Generator",        slug: "hash-generator",      desc: "Generate hash MD5, SHA-1, SHA-256, SHA-512 dari teks input apapun.",                            icon: "fas fa-file-shield",      category: "generator" },
   { id: 33, name: "Gradient Generator",    slug: "gradient-generator",  desc: "Buat CSS gradient cantik dengan visual editor dan salin kode CSS-nya langsung.",                icon: "fas fa-wand-magic-sparkles", category: "generator" },
   { id: 34, name: "Box Shadow Generator",  slug: "box-shadow-generator",desc: "Desain CSS box-shadow dengan kontrol visual dan preview langsung. Salin kode CSS-nya.",         icon: "fas fa-square",           category: "generator" },
+  { id: 37, name: "AI Nickname Generator", slug: "ai-nickname-generator",desc: "Buat nickname 3 suku kata unik dengan AI dari nama panggilan dan tema favorit.",           icon: "fas fa-robot",            category: "generator" },
 
   // ── Downloader ──
   { id: 35, name: "TikTok Downloader",     slug: "tiktok-downloader",   desc: "Download video TikTok tanpa watermark dalam resolusi HD. Gratis & cepat.",                      icon: "fab fa-tiktok",           category: "downloader" },
@@ -170,7 +171,7 @@ function initTypewriter() {
   if (!el) return;
 
   const phrases = [
-    "36+ Tools Online Gratis 🚀",
+    "37+ Tools Online Gratis 🚀",
     "Download TikTok & IG HD",
     "Developer • Desainer • Kreator",
     "Cepat, Mudah & Tanpa Registrasi",
