@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="Profil NyukTools — Profil Tuan" />
+  <link rel="icon" href="logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <title>Profil — NyukTools</title>
+  <style>
+    /* Profile Specific Styles */
+    .profile-page {
+      padding: 120px 1.5rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .profile-card {
+      background: var(--bg-secondary);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      width: 100%;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Glow overlay similar to tool cards */
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 200px;
+      background: var(--accent);
+      filter: blur(100px);
+      opacity: 0.15;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .profile-logo {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: invert(1);
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+      filter: invert(1) drop-shadow(0 0 15px var(--accent-glow));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .profile-card h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 1px;
+    }
+
+    .profile-info {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-sm);
+      padding: 2rem;
+      text-align: left;
+      position: relative;
+      z-index: 1;
+      font-family: 'Consolas', 'Courier New', monospace;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+    
+    .profile-info span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .profile-back {
+      margin-top: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    .profile-back:hover {
+      color: var(--accent);
+      transform: translateX(-5px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div class="loader" id="loader"><div class="loader-spinner"><img src="logo.png" alt="NyukTools" class="loader-logo"></div></div>
+
+  <!-- PARTICLES -->
+  <div id="particles-js"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><img src="logo.png" alt="NyukTools" class="nav-logo-img"> NyukTools</a>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#stats">Statistik</a></li>
+        <li><a href="index.html#tools-section">Tools</a></li>
+        <li><a href="profile.html" class="active">Profile</a></li>
+      </ul>
+      <div class="theme-selector-container">
+        <button class="theme-btn" id="themeBtn" aria-label="Ganti Tema"><i class="fas fa-palette"></i></button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <div class="theme-option active" data-accent="#10b981" data-hover="#059669" title="Hijau" style="background:#10b981;"></div>
+          <div class="theme-option" data-accent="#ef4444" data-hover="#dc2626" title="Merah" style="background:#ef4444;"></div>
+          <div class="theme-option" data-accent="#3b82f6" data-hover="#2563eb" title="Biru" style="background:#3b82f6;"></div>
+          <div class="theme-option" data-accent="#8b5cf6" data-hover="#7c3aed" title="Ungu" style="background:#8b5cf6;"></div>
+          <div class="theme-option" data-accent="#f97316" data-hover="#ea580c" title="Oranye" style="background:#f97316;"></div>
+          <div class="theme-option" data-accent="#06b6d4" data-hover="#0891b2" title="Cyan" style="background:#06b6d4;"></div>
+        </div>
+      </div>
+      <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="profile-page">
+    <div class="profile-card">
+      <img src="logo.png" alt="Logo" class="profile-logo">
+      <h1>SYSTEM ADMIN</h1>
+      <div class="profile-info">
+        <div><span>[+]</span> Status Sistem : Aktif</div>
+        <div><span>[+]</span> Fokus Utama   : IoT, Infrastruktur Web & Efisiensi Sistem</div>
+        <div><span>[+]</span> Lokasi        : Di antara localhost dan server cloud</div>
+      </div>
+    </div>
+    
+    <a href="index.html" class="profile-back"><i class="fas fa-arrow-left"></i> Kembali ke Home</a>
+  </main>
+
+  <footer style="margin-top:2rem;">
+    <div class="footer-bottom">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <p style="margin:0; font-size: 0.95rem; color: var(--text-secondary);">🔥 Butuh jasa joki tugas IT / pembuatan website / aplikasi? Kunjungi <a href="https://e-kunyuk.vercel.app/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">E-Kunyuk Joki <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a></p>
+      </div>
+      <p>&copy; 2024 NyukTools. Dibuat dengan <i class="fas fa-heart" style="color:var(--accent);"></i> untuk komunitas developer Indonesia.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" onerror="document.getElementById('particles-js').style.display='none';"></script>
+  <script src="script.js"></script>
+</body>
+</html>

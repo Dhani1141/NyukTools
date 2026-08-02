@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="ToolsNexus — Gunakan tools online gratis langsung di browser." />
+  <link rel="icon" href="logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <title id="pageTitle">Tool — NyukTools</title>
+  <style>
+    /* ========== Tool Page Specific Styles ========== */
+    .tool-page { padding: 100px 1.5rem 3rem; max-width: 900px; margin: 0 auto; min-height: 80vh; }
+    .tool-back { display: inline-flex; align-items: center; gap: .5rem; color: var(--accent); text-decoration: none; font-size: .95rem; font-weight: 500; margin-bottom: 1.5rem; transition: var(--transition); padding: .5rem .75rem; border-radius: var(--border-radius-sm); }
+    .tool-back:hover { background: var(--accent-subtle); padding-left: 0; }
+    .tool-back i { transition: transform .3s; }
+    .tool-back:hover i { transform: translateX(-4px); }
+    .tool-page-header { text-align: center; margin-bottom: 2.5rem; }
+    .tool-page-header h1 { font-size: 2rem; font-weight: 600; margin-bottom: .5rem; display: flex; align-items: center; justify-content: center; gap: .75rem; }
+    .tool-page-header h1 i { color: var(--accent); }
+    .tool-page-header p { color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+    .tool-body { background: var(--bg-secondary); border: 1px solid var(--glass-border); border-radius: var(--border-radius); padding: 2rem; }
+    .tool-section { margin-bottom: 1.5rem; }
+    .tool-section:last-child { margin-bottom: 0; }
+    .tool-label { display: block; font-size: .9rem; color: var(--text-secondary); font-weight: 500; margin-bottom: .5rem; }
+    .tool-textarea, .tool-input, .tool-select {
+      width: 100%; background: rgba(0,0,0,.3); border: 1px solid var(--glass-border); border-radius: var(--border-radius-sm);
+      color: var(--text-primary); padding: .85rem 1rem; font-size: .95rem; font-family: inherit; transition: var(--transition); outline: none; resize: vertical;
+    }
+    .tool-textarea:focus, .tool-input:focus, .tool-select:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+    .tool-textarea { min-height: 120px; }
+    .tool-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b3b3b3' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+    .tool-select option { background: var(--bg-secondary); color: var(--text-primary); }
+    .tool-btn-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .tool-btn {
+      background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: .65rem 1.25rem;
+      border-radius: var(--border-radius-sm); font-weight: 500; cursor: pointer; transition: var(--transition); font-family: inherit; font-size: .88rem;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .tool-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 4px 15px var(--accent-glow); }
+    .tool-btn.primary { background: var(--accent); color: #fff; }
+    .tool-btn.primary:hover { background: var(--accent-hover); }
+    .tool-btn.sm { padding: .45rem .85rem; font-size: .8rem; }
+    .tool-output {
+      background: rgba(0,0,0,.4); border: 1px solid var(--glass-border); border-radius: var(--border-radius-sm);
+      padding: 1rem; color: var(--text-primary); min-height: 60px; font-family: 'Courier New', monospace; font-size: .9rem;
+      word-break: break-all; white-space: pre-wrap; position: relative; overflow-x: auto;
+    }
+    .tool-output:empty::before { content: 'Hasil akan muncul di sini...'; color: var(--text-muted); font-family: 'Poppins', sans-serif; font-style: italic; }
+    .tool-result-box { background: var(--accent-subtle); border: 1px dashed var(--accent); border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
+    .tool-result-big { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .tool-result-label { font-size: .85rem; color: var(--text-secondary); margin-top: .25rem; }
+    .tool-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .75rem; margin-top: 1rem; }
+    .tool-stat { background: rgba(0,0,0,.2); border-radius: var(--border-radius-sm); padding: .75rem; text-align: center; border: 1px solid var(--glass-border); }
+    .tool-stat-value { font-size: 1.3rem; font-weight: 600; color: var(--accent); }
+    .tool-stat-name { font-size: .75rem; color: var(--text-secondary); margin-top: .15rem; }
+    .tool-color-preview { width: 100%; height: 80px; border-radius: var(--border-radius-sm); border: 1px solid var(--glass-border); margin-bottom: .75rem; transition: background .3s; }
+    .tool-color-input { width: 60px; height: 40px; border: none; border-radius: var(--border-radius-sm); cursor: pointer; background: transparent; }
+    .tool-range { width: 100%; accent-color: var(--accent); cursor: pointer; }
+    .tool-range-row { display: flex; align-items: center; gap: 1rem; }
+    .tool-range-val { min-width: 50px; text-align: center; color: var(--accent); font-weight: 600; font-size: .95rem; }
+    .tool-checkbox { display: flex; align-items: center; gap: .5rem; cursor: pointer; font-size: .9rem; color: var(--text-secondary); }
+    .tool-checkbox input { accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer; }
+    .tool-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .tool-divider { border: none; border-top: 1px solid var(--glass-border); margin: 1.5rem 0; }
+    .tool-preview-box { border: 2px solid var(--glass-border); border-radius: var(--border-radius); padding: 2rem; display: flex; align-items: center; justify-content: center; min-height: 120px; margin-top: .75rem; transition: var(--transition); }
+    .tool-tag { display: inline-block; background: var(--accent-subtle); color: var(--accent); padding: .15rem .5rem; border-radius: 4px; font-size: .72rem; font-weight: 600; text-transform: uppercase; margin-bottom: .5rem; }
+    .dl-card { background: rgba(0,0,0,.25); border: 1px solid var(--glass-border); border-radius: var(--border-radius-sm); padding: 1.25rem; text-align: center; }
+    .dl-card video, .dl-card img { max-width: 100%; max-height: 350px; border-radius: var(--border-radius-sm); margin-bottom: 1rem; }
+    .dl-card .tool-btn { width: 100%; justify-content: center; }
+    .tool-loading { display: flex; align-items: center; justify-content: center; gap: .75rem; padding: 2rem; color: var(--text-secondary); }
+    .tool-loading i { animation: spinRing 1s linear infinite; color: var(--accent); font-size: 1.3rem; }
+    .tool-error { color: #ef4444; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); border-radius: var(--border-radius-sm); padding: 1rem; text-align: center; margin-top: 1rem; }
+    #qr-output canvas, #qr-output img { margin: 0 auto; display: block; }
+    .md-preview { background: rgba(0,0,0,.3); border: 1px solid var(--glass-border); border-radius: var(--border-radius-sm); padding: 1.25rem; color: var(--text-primary); min-height: 120px; overflow: auto; }
+    .md-preview h1,.md-preview h2,.md-preview h3 { color: var(--accent); margin: .5em 0; }
+    .md-preview code { background: rgba(255,255,255,.08); padding: 2px 6px; border-radius: 4px; font-size: .9em; }
+    .md-preview pre { background: rgba(0,0,0,.4); padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    .md-preview blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; color: var(--text-secondary); margin: .5em 0; }
+    .md-preview a { color: var(--accent); }
+    .md-preview ul, .md-preview ol { padding-left: 1.5rem; }
+    @media(max-width:640px){
+      .tool-page { padding: 90px 1rem 2rem; }
+      .tool-body { padding: 1.25rem; }
+      .tool-grid-2 { grid-template-columns: 1fr; }
+      .tool-page-header h1 { font-size: 1.5rem; }
+      .tool-result-big { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <nav id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><img src="logo.png" alt="NyukTools" class="nav-logo-img"> NyukTools</a>
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <a href="index.html" class="tool-btn sm"><i class="fas fa-th-large"></i> Semua Tools</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="tool-page">
+    <a href="index.html" class="tool-back"><i class="fas fa-arrow-left"></i> Kembali ke Semua Tools</a>
+    <div class="tool-page-header">
+      <h1 id="toolIcon"></h1>
+      <p id="toolDesc"></p>
+    </div>
+    <div class="tool-body" id="toolBody">
+      <div class="tool-loading"><i class="fas fa-spinner"></i> Memuat tool...</div>
+    </div>
+  </main>
+
+  <footer style="margin-top:2rem;">
+      <div style="text-align: center; margin-bottom: 1rem;">
+        <p style="margin:0; font-size: 0.95rem; color: var(--text-secondary);">🔥 Butuh jasa joki tugas IT / pembuatan website / aplikasi? Kunjungi <a href="https://e-kunyuk.vercel.app/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">E-Kunyuk Joki <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a></p>
+      </div>
+      <p>&copy; 2024 NyukTools. Dibuat dengan <i class="fas fa-heart" style="color:var(--accent);"></i> untuk komunitas developer Indonesia.</p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+  <div class="toast" id="toast"><i class="fas fa-check-circle toast-icon"></i><span id="toastMessage"></span></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" onerror="document.getElementById('particles-js').style.display='none';"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" onerror="console.warn('QRCode lib not loaded');"></script>
+  <script src="tools.js"></script>
+</body>
+</html>
