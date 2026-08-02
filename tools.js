@@ -202,9 +202,9 @@ TOOLS['ai-nickname-generator'] = {
         var html = '';
         nicknames.forEach(function(r) {
           if(!r) return;
-          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem 1.25rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; transition: all 0.3s ease;" onmouseover="this.style.background=\\'rgba(255,255,255,0.1)\\'" onmouseout="this.style.background=\\'rgba(255,255,255,0.05)\\'">' +
+          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem 1.25rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; transition: all 0.3s ease;" onmouseover="this.style.background=\'rgba(255,255,255,0.1)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.05)\'">' +
                   '<span style="font-weight:600; font-size:1.15rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
-                  '<button class="tool-btn sm" onclick="copyText(\\'' + r + '\\')"><i class="fas fa-copy"></i> Salin</button>' +
+                  '<button class="tool-btn sm" onclick="copyText(\'' + r + '\')"><i class="fas fa-copy"></i> Salin</button>' +
                   '</div>';
         });
         out.innerHTML = html;
