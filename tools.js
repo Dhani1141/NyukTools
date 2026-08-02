@@ -116,6 +116,63 @@ TOOLS['slug-generator'] = {
   }
 };
 
+TOOLS['ai-nickname-generator'] = {
+  render: function() {
+    return '<div class="tool-section"><label class="tool-label">Nama Panggilan (Maks 1-2 kata)</label><input type="text" class="tool-input" id="nickName" placeholder="Contoh: Kunyuk"></div><div class="tool-section" style="margin-top:1rem;"><label class="tool-label">Tema Kesukaan</label><select class="tool-input" id="nickTheme"><option value="anime">Anime / Wibu</option><option value="dark">Dark / Edgy</option><option value="gaming">Gaming / E-Sports</option><option value="animal">Hewan / Nature</option><option value="hacker">Hacker / Cyber</option></select></div><div class="tool-btn-row"><button class="tool-btn primary" id="generateNickBtn"><i class="fas fa-magic"></i> Generate AI Nickname</button></div><div class="tool-section" style="margin-top:1rem;"><div id="nickOutput" style="display:flex; flex-direction:column; gap:0.5rem;"></div></div>';
+  },
+  init: function() {
+    $('generateNickBtn').onclick = function() {
+      var name = $('nickName').value.trim();
+      var theme = $('nickTheme').value;
+      
+      if (!name) {
+        showToast('Masukkan nama panggilan dulu!');
+        return;
+      }
+      
+      var out = $('nickOutput');
+      out.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1rem;"><i class="fas fa-spinner fa-spin"></i> AI sedang meracik...</div>';
+      
+      // Artificial delay for "AI" generation feel
+      setTimeout(function() {
+        var results = [];
+        var dict = {
+          anime: { pre: ["Kyu", "Shi", "Ren", "Zen", "Ken"], post: ["Kun", "Chan", "San", "Sama", "Sen"] },
+          dark: { pre: ["El", "Zyn", "Grim", "Noct", "Vex"], post: ["Zol", "X", "Void", "Soul", "Hex"] },
+          gaming: { pre: ["Pro", "God", "Rex", "Faze", "Zen"], post: ["Z", "Bot", "X", "Win", "Opie"] },
+          animal: { pre: ["Red", "Mad", "Lil", "Big", "Sly"], post: ["Fox", "Wolf", "Yuk", "Bear", "Cat"] },
+          hacker: { pre: ["0x", "Sys", "Net", "Neo", "Root"], post: ["Sec", "X", "Exe", "Bin", "Dot"] }
+        };
+        
+        var selected = dict[theme] || dict['gaming'];
+        var baseName = name.split(" ")[0]; // Take first word to keep it short
+        baseName = baseName.charAt(0).toUpperCase() + baseName.slice(1).toLowerCase();
+        
+        var shuffle = function(arr) { return arr.slice().sort(function(){return 0.5 - Math.random()}); };
+        var pres = shuffle(selected.pre);
+        var posts = shuffle(selected.post);
+        
+        // Target: 3 "penyebutan" (syllables/words). Format combinations:
+        results.push(pres[0] + " " + baseName + " " + posts[0]); // Prefix + Base + Suffix
+        results.push(pres[1] + " " + baseName + " " + posts[1]); // Prefix + Base + Suffix
+        results.push(pres[2] + baseName + " " + posts[2]);       // PreBase + Suffix
+        results.push(pres[3] + " " + baseName + posts[3]);       // Prefix + BasePost
+        results.push(pres[4] + " " + baseName + " " + posts[4]); // Prefix + Base + Suffix
+        
+        var html = '';
+        results.forEach(function(r) {
+          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">' +
+                  '<span style="font-weight:600; font-size:1.1rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
+                  '<button class="tool-btn sm" onclick="copyText(\'' + r + '\')"><i class="fas fa-copy"></i> Salin</button>' +
+                  '</div>';
+        });
+        out.innerHTML = html;
+        showToast('Nickname berhasil digenerate! 🎉');
+      }, 700);
+    };
+  }
+};
+
 // ── IMAGE TOOLS ─────────────────────────────────────────
 
 TOOLS['color-picker'] = {
@@ -610,6 +667,7 @@ var toolMeta = {
   'box-shadow-generator':{ name:'Box Shadow Generator', icon:'fas fa-square',            desc:'Desain CSS box-shadow dengan kontrol visual.' },
   'tiktok-downloader':  { name:'TikTok Downloader',     icon:'fab fa-tiktok',            desc:'Download video TikTok tanpa watermark dalam resolusi HD.' },
   'instagram-downloader':{ name:'Instagram Downloader', icon:'fab fa-instagram',         desc:'Download foto & video Instagram/Reels dalam resolusi HD.' },
+  'ai-nickname-generator':{ name:'AI Nickname Generator',icon:'fas fa-robot',            desc:'Buat nickname 3 suku kata unik dengan AI dari nama panggilan dan tema.' },
 };
 
 document.addEventListener('DOMContentLoaded', function(){
