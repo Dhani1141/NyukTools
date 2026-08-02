@@ -426,7 +426,7 @@ function renderTools() {
   grid.innerHTML = filtered
     .map(function (tool, index) {
       return `
-        <div class="tool-card">
+        <div class="tool-card" onclick="window.location.href='tool.html?id=${tool.slug}'" style="cursor:pointer;">
           <span class="tool-card-category">${categoryLabels[tool.category] || tool.category}</span>
           <i class="${tool.icon} tool-card-icon"></i>
           <h3>${highlightMatch(tool.name)}</h3>
@@ -611,13 +611,16 @@ function init3DCards() {
   var grid = document.getElementById("toolsGrid");
   if (!grid) return;
 
-  var MAX_TILT = 15;       // Max tilt degrees
-  var GLARE_OPACITY = 0.15; // Max glare brightness
-  var SCALE_HOVER = 1.05;  // Scale on hover
+  var MAX_TILT = 5;        // Reduced max tilt degrees for subtle effect
+  var GLARE_OPACITY = 0.1; // Max glare brightness
+  var SCALE_HOVER = 1.02;  // Reduced scale on hover
   var TRANSITION_OUT = "transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1)";
 
   // Use event delegation on the grid for performance
   grid.addEventListener("mousemove", function (e) {
+    // Disable 3D tilt on mobile devices
+    if (window.innerWidth <= 768) return;
+
     var card = e.target.closest(".tool-card");
     if (!card || !card.classList.contains("show")) return;
 
