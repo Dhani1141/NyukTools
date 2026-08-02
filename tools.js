@@ -141,7 +141,7 @@ TOOLS['ai-nickname-generator'] = {
   },
   init: function() {
     $('generateNickBtn').onclick = async function() {
-      var apiKey = 'AQ.Ab8RN6JzcjXL4BYTynJt01DCoXAm6_EWnYplfYWa6kVe6ZeW9A';
+      var apiKey = 'AQ.Ab8RN6KliiVRtAJ5mXA3p_WrkA_HNwMnQHvTj7CC_2ZpN8hghA';
       var name = $('nickName').value.trim();
       var theme = $('nickTheme').value.trim();
       
@@ -153,10 +153,14 @@ TOOLS['ai-nickname-generator'] = {
       var out = $('nickOutput');
       out.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem;"><i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; color: var(--accent); margin-bottom: 0.5rem; display: block;"></i> AI sedang memikirkan nickname terkeren...</div>';
       
-      var prompt = "Buatkan 5 rekomendasi nickname kreatif untuk orang bernama '" + name + "' dengan tema kesukaan '" + theme + "'. Syarat mutlak: maksimal 3 kata/suku kata penyebutan (contoh format: El Kun Yuk, atau Dark Tung, atau Cypher Kunyuk). Nickname harus aesthetic dan nyambung dengan tema. Jangan berikan teks pembuka atau penutup. Berikan output HANYA berupa JSON array yang berisi 5 string nickname tersebut, contoh format: [\"Nick1\", \"Nick2\", \"Nick3\", \"Nick4\", \"Nick5\"].";
+      var prompt = "Buatkan 5 rekomendasi nickname kreatif untuk orang bernama '" + name + "' dengan tema kesukaan '" + theme + "'. Syarat mutlak: maksimal 3 kata/suku kata penyebutan (contoh format: ElKunyuk, Dark Tung, CypherNyuk). Nickname harus aesthetic dan nyambung dengan tema. Jangan berikan teks pembuka atau penutup. Berikan output HANYA berupa JSON array yang berisi 5 string nickname tersebut, contoh format: [\"Nick1\", \"Nick2\", \"Nick3\", \"Nick4\", \"Nick5\"].";
 
+      var nicknames = [];
+      var usedAI = false;
+
+      // Try Gemini API
       try {
-        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey, {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -166,38 +170,89 @@ TOOLS['ai-nickname-generator'] = {
 
         const data = await response.json();
         
-        if (data.error) {
-          out.innerHTML = '<div style="color:#ef4444; background: rgba(239, 68, 68, 0.1); padding:1rem; border:1px solid #ef4444; border-radius:8px;"><i class="fas fa-circle-exclamation"></i> Error: ' + data.error.message + '</div>';
-          return;
+        if (!data.error && data.candidates && data.candidates[0]) {
+          let aiText = data.candidates[0].content.parts[0].text;
+          aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
+          try {
+            nicknames = JSON.parse(aiText);
+            usedAI = true;
+          } catch(e) {
+            nicknames = aiText.split('\n').map(function(n){ return n.replace(/^[-\d. "*]+/, '').replace(/["']/g, '').trim(); }).filter(function(n){ return n.length > 0; }).slice(0, 5);
+            if (nicknames.length > 0) usedAI = true;
+          }
         }
-
-        let aiText = data.candidates[0].content.parts[0].text;
-        
-        // Clean JSON formatting if AI wrapped it in markdown
-        aiText = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
-        
-        let nicknames = [];
-        try {
-          nicknames = JSON.parse(aiText);
-        } catch(e) {
-          // Fallback parsing if AI output isn't pure JSON
-          nicknames = aiText.split('\\n').map(n => n.replace(/^[-\\d. "*]+/, '').replace(/["']/g, '').trim()).filter(n => n.length > 0).slice(0, 5);
-        }
-
-        var html = '';
-        nicknames.forEach(function(r) {
-          if(!r) return;
-          html += '<div style="background:rgba(255,255,255,0.05); padding:1rem 1.25rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center; transition: all 0.3s ease;" onmouseover="this.style.background=\'rgba(255,255,255,0.1)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.05)\'">' +
-                  '<span style="font-weight:600; font-size:1.15rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
-                  '<button class="tool-btn sm" onclick="copyText(\'' + r + '\')"><i class="fas fa-copy"></i> Salin</button>' +
-                  '</div>';
-        });
-        out.innerHTML = html;
-        showToast('Berhasil digenerate oleh AI! 🧠');
-        
       } catch (err) {
-        out.innerHTML = '<div style="color:#ef4444; background: rgba(239, 68, 68, 0.1); padding:1rem; border:1px solid #ef4444; border-radius:8px;"><i class="fas fa-wifi"></i> Gagal menghubungi API AI. Pastikan internet lancar atau API Key valid.</div>';
+        // API failed, will use smart fallback below
       }
+
+      // Smart local fallback if API failed
+      if (!usedAI || nicknames.length === 0) {
+        var baseName = name.split(' ')[0];
+        baseName = baseName.charAt(0).toUpperCase() + baseName.slice(1).toLowerCase();
+        var t = theme.toLowerCase();
+        
+        // Huge dictionary organized by vibes
+        var pools = {
+          pre: ["El","Neo","Zyn","Kira","Ren","Vex","Nox","Aki","Rei","Shiro","Cyber","Red","Lux","Hex","Ion","Oni","Zer0","Xen","Sol","Blaze","Grim","Nova","Pro","God","Rex","Faze","Mad","Lil","Big","Root","0x","Sys","Net"],
+          mid: ["x","_","No","De","La","Von","Mc","Van","Le","Di"],
+          post: ["X","Kun","Chan","San","Z","Bot","Fox","Wolf","Cat","Sec","Exe","Dot","Soul","Void","Hex","Win","Fire","Ice","Storm","Byte","Core","Flux","Zen","Max","Ace","Pro","God","King","Lord","Sama"]
+        };
+        
+        // Theme-specific flavor
+        if (t.match(/anime|wibu|jepang|otaku/)) {
+          pools.pre = ["Kira","Ren","Zen","Shin","Aki","Rei","Shiro","Ryu","Hiro","Yuki"];
+          pools.post = ["Kun","Chan","San","Sama","Sensei","Senpai","Maru","Dono","Shi","Neko"];
+        } else if (t.match(/dark|edgy|gothic|gelap/)) {
+          pools.pre = ["El","Grim","Noct","Vex","Nox","Shadow","Void","Reaper","Abyss","Onyx"];
+          pools.post = ["Zol","Void","Soul","Hex","Bane","Dusk","Shade","Wraith","Doom","Nyx"];
+        } else if (t.match(/game|gaming|esport|fps/)) {
+          pools.pre = ["Pro","God","Rex","Faze","Ace","Clutch","Snipe","Rush","MVP","Elite"];
+          pools.post = ["Z","Bot","X","Win","GG","Op","Goat","Carry","Diff","Yt"];
+        } else if (t.match(/hacker|cyber|tech|kode|code/)) {
+          pools.pre = ["0x","Sys","Net","Neo","Root","Sudo","Null","Bit","Dev","Cyber"];
+          pools.post = ["Sec","Exe","Bin","Dot","Byte","SSH","Pwn","Log","Cmd","Sh"];
+        } else if (t.match(/hewan|animal|nature|alam/)) {
+          pools.pre = ["Red","Mad","Lil","Big","Sly","Wild","Alpha","Lone","Swift","Iron"];
+          pools.post = ["Fox","Wolf","Bear","Cat","Hawk","Lynx","Crow","Fang","Claw","Paw"];
+        } else if (t.match(/uang|money|bisnis|rich|sultan/)) {
+          pools.pre = ["Cash","Rich","Gold","King","Boss","CEO","Lux","Prime","Royal","Grand"];
+          pools.post = ["Money","Cash","Gold","Rich","Bank","Coin","Buck","Pay","Vault","Drip"];
+        } else if (t.match(/kopi|coffee|cafe/)) {
+          pools.pre = ["Mocha","Brew","Latte","Drip","Roast","Bean","Dark","Bold","Cafe","Espresso"];
+          pools.post = ["Brew","Bean","Drip","Shot","Grind","Roast","Cup","Sip","Blend","Press"];
+        }
+        
+        var shuffle = function(a) { return a.slice().sort(function(){ return 0.5 - Math.random(); }); };
+        var pres = shuffle(pools.pre);
+        var posts = shuffle(pools.post);
+        var mids = shuffle(pools.mid);
+        
+        nicknames = [
+          pres[0] + baseName,
+          pres[1] + " " + baseName + " " + posts[0],
+          baseName + posts[1],
+          pres[2] + mids[0] + baseName,
+          pres[3] + " " + baseName + posts[2]
+        ];
+      }
+
+      // Render results
+      var html = '';
+      var badge = usedAI 
+        ? '<div style="text-align:center; margin-bottom:1rem;"><span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.8rem;"><i class="fas fa-microchip"></i> Generated by Gemini AI</span></div>'
+        : '<div style="text-align:center; margin-bottom:1rem;"><span style="background:rgba(251,191,36,0.15); color:#fbbf24; padding:4px 12px; border-radius:20px; font-size:0.8rem;"><i class="fas fa-bolt"></i> Generated by Smart Algorithm</span></div>';
+      html += badge;
+      
+      nicknames.forEach(function(r) {
+        if(!r) return;
+        var safeR = r.replace(/'/g, "\\'");
+        html += '<div style="background:rgba(255,255,255,0.05); padding:1rem 1.25rem; border-radius:var(--border-radius-sm); border:1px solid var(--glass-border); display:flex; justify-content:space-between; align-items:center;">' +
+                '<span style="font-weight:600; font-size:1.15rem; color:var(--text-primary); letter-spacing:0.5px;">' + r + '</span>' +
+                '<button class="tool-btn sm" onclick="copyText(\'' + safeR + '\')"><i class="fas fa-copy"></i> Salin</button>' +
+                '</div>';
+      });
+      out.innerHTML = html;
+      showToast(usedAI ? 'Berhasil digenerate oleh AI! \uD83E\uDDE0' : 'Nickname berhasil digenerate! \uD83C\uDF89');
     };
   }
 };
